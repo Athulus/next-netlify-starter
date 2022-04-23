@@ -1,23 +1,44 @@
 import Head from 'next/head'
-import Header from '@components/Header'
-import Footer from '@components/Footer'
+import Layout, { siteTitle } from '@components/Layout'
+import utilStyles from '@styles/utils.module.css'
+import { getSortedPostsData } from 'lib/posts'
+import Link from 'next/link'
 
-export default function Home() {
+export async function getStaticProps(){
+  const allPostsData = getSortedPostsData()
+  return {
+    props: {
+      allPostsData
+    }
+  }
+}
+
+export default function Home({ allPostsData }) {
   return (
-    <div className="container">
+    <Layout home>
       <Head>
-        <title>Next.js Starter!</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>{siteTitle}</title>
       </Head>
-
-      <main>
-        <Header title="Welcome to my app!" />
-        <p className="description">
-          Get started by editing <code>pages/index.js</code>
+      <section className={utilStyles.headingMd}>
+        <p>Hi! I'm Max. I'm a software developer trying to build a website about rocks. Learn more soon!</p>
+        <p>
+          (This is a sample website - you’ll be building a site like this on{' '}
+          <a href="https://nextjs.org/learn">our Next.js tutorial</a>.)
         </p>
-      </main>
+      </section>
 
-      <Footer />
-    </div>
+      <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
+        <h2 className={utilStyles.headingLg}>Blog</h2>
+        <ul className={utilStyles.list}>
+          {allPostsData.map(({id, date, title}) => ( 
+            <li className={utilStyles.listItem} key={id}>
+              <Link href={`/posts/${id}`}>{title}</Link>
+              <br/>
+              {date}
+            </li>
+          ))}
+        </ul>
+      </section>
+    </Layout>
   )
 }
